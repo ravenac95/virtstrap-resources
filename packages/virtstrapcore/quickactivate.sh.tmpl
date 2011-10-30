@@ -1,0 +1,26 @@
+#!/bin/bash
+source {{s.virtstrap.base_dir.abs_path}}/bin/activate
+
+# Save the deactivate function from virtualenv under a different name
+virtualenvwrapper_original_deactivate=`typeset -f deactivate | sed 's/deactivate/virtualenv_deactivate/g'`
+eval "$virtualenvwrapper_original_deactivate"
+unset -f deactivate >/dev/null 2>&1
+
+{{if s.environment.custom}}
+eval `python {{ s.virtstrap.resources_dir.abs_path }}/env.py {{ s.virtstrap.config_dir }}/{{ s.environment.custom}}`
+{{endif}}
+
+deactivate () {
+    virtualenv_deactivate $1
+
+{{if s.environment.custom}}
+    deactivate_custom_env $1
+{{endif}}
+
+    if [ ! "$1" = "nondestructive" ]
+    then
+        # Remove this function
+        unset -f virtualenv_deactivate >/dev/null 2>&1
+        unset -f deactivate >/dev/null 2>&1
+    fi
+}

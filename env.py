@@ -22,7 +22,7 @@ cli_options, cli_args = parser.parse_args()
 
 def build_custom_env(custom_env_path):
     try:
-        custom_env = imp.load_source("virtstrap.userdef.customenv",
+        custom_env = imp.load_source("virtstrap_userdef_customenv",
                 custom_env_path)
     except ImportError:
         sys.stderr.write('Custom environment script at "{0}"\n'.format(
